@@ -26,6 +26,7 @@ def get_provider_for_model(model_id: str) -> ImageProvider:
     from app.providers.qwen import QwenProvider
     from app.providers.minimax import MinimaxProvider
     from app.providers.doubao import DoubaoProvider
+    from app.providers.openai import OpenAIProvider
 
     for group in AVAILABLE_MODELS:
         for m in group["models"]:
@@ -38,4 +39,6 @@ def get_provider_for_model(model_id: str) -> ImageProvider:
                     return MinimaxProvider()
                 if m["prefix"] == "doubao":
                     return DoubaoProvider()
+                if m["prefix"] == "openai":
+                    return OpenAIProvider()
     return GeminiProvider()  # Default fallback

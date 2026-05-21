@@ -62,6 +62,7 @@ for env_key, prov_name, prefix, model_type in [
     ("QWEN_MODELS", "Alibaba 通义千问", "qwen", "image"),
     ("MINIMAX_MODELS", "MiniMax 稀宇科技", "minimax", "image"),
     ("DOUBAO_MODELS", "ByteDance 豆包", "doubao", "image"),
+    ("OPENAI_MODELS", "OpenAI", "openai", "image"),
     ("WAN_MODELS", "Alibaba 万相视频", "wan", "video"),
 ]:
     parsed = parse_models(os.getenv(env_key, ""), prov_name, prefix, model_type)
