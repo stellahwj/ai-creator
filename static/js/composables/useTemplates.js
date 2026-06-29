@@ -64,9 +64,9 @@ export function useTemplates(form) {
                 showSaveTemplateModal.value = false;
             } else {
                 const err = await res.json();
-                alert(err.error || "保存失败");
+                alert(err.error || "Failed to save");
             }
-        } catch (e) { alert("网络异常导致保存失败"); }
+        } catch (e) { alert("Save failed due to a network error"); }
     };
 
     const editTemplate = (scope, t) => {
@@ -76,7 +76,7 @@ export function useTemplates(form) {
     };
 
     const deleteTemplate = async (scope, name) => {
-        if (!confirm(`确定要删除此${scope === 'public' ? '公共' : '私有'}模板吗？`)) return;
+        if (!confirm(`Delete this ${scope === 'public' ? 'public' : 'private'} template?`)) return;
         try {
             const res = await authFetch(`/api/templates/${scope}/${encodeURIComponent(name)}`, { method: 'DELETE' });
             if (res.ok) {
@@ -84,9 +84,9 @@ export function useTemplates(form) {
                 if (form.value.selectedTemplate === `${scope}:${name}`) form.value.selectedTemplate = '';
             } else {
                 const data = await res.json();
-                alert(data.error || "删除失败");
+                alert(data.error || "Failed to delete");
             }
-        } catch (e) { alert("删除请求发生错误！"); }
+        } catch (e) { alert("Something went wrong while deleting."); }
     };
 
     return {

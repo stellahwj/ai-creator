@@ -44,7 +44,7 @@ export function useDownload() {
             a.href = blobUrl; a.download = name; a.style.display = 'none';
             document.body.appendChild(a); a.click();
             setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(blobUrl); }, 1000);
-        } catch (error) { alert("下载文件时遇到错误！"); }
+        } catch (error) { alert("Something went wrong while downloading the file."); }
     };
 
     const downloadAll = async (jobId) => {
@@ -55,14 +55,14 @@ export function useDownload() {
             const token = getToken();
             const headers = token ? { 'Authorization': 'Bearer ' + token } : {};
             const response = await fetch(`/api/jobs/${jobId}/download`, { headers });
-            if (!response.ok) throw new Error("下载压缩包失败");
+            if (!response.ok) throw new Error("Failed to download archive");
 
             const blobUrl = URL.createObjectURL(await response.blob());
             const a = document.createElement('a');
             a.href = blobUrl; a.download = name; a.style.display = 'none';
             document.body.appendChild(a); a.click();
             setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(blobUrl); }, 1000);
-        } catch (error) { alert("打包下载时遇到错误！"); }
+        } catch (error) { alert("Something went wrong while downloading the archive."); }
     };
 
     return { dlDialog, confirmDownloadName, cancelDownload, downloadImage, downloadAll };

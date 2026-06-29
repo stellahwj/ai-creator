@@ -37,7 +37,7 @@ export function useSizeAnnotation(form, fetchCredit, userValue) {
 
     const startSizeAnnotFlow = async () => {
         if (form.value.files.length === 0) {
-            alert('请上传一张产品图片');
+            alert('Please upload a product image.');
             return;
         }
 
@@ -64,13 +64,13 @@ export function useSizeAnnotation(form, fetchCredit, userValue) {
                 body: fd,
             });
             const data = await res.json();
-            if (!res.ok) throw new Error(data.error || '生成失败');
+            if (!res.ok) throw new Error(data.error || 'Generation failed');
 
             saResult.value = data;
             saFlowState.value = 'done';
             fetchCredit();
         } catch (e) {
-            alert('尺寸标注图生成失败：' + e.message);
+            alert('Failed to generate size-annotated image: ' + e.message);
             saFlowState.value = 'idle';
         } finally {
             setSubmitting(false);

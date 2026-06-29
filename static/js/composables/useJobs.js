@@ -27,12 +27,12 @@ export function useJobs(fetchCredit) {
     };
 
     const deleteJob = async (id, user) => {
-        if (!confirm('确定要彻底删除这条历史记录吗？')) return;
+        if (!confirm('Permanently delete this record?')) return;
         try {
             const response = await authFetch('/api/jobs/' + id, { method: 'DELETE' });
             if (response.ok) fetchJobs(user);
-            else alert('删除失败，权限不足或任务不存在。');
-        } catch (error) { alert('删除请求发生错误！'); }
+            else alert('Delete failed — insufficient permission or the job no longer exists.');
+        } catch (error) { alert('Something went wrong while deleting.'); }
     };
 
     const hasFailedResults = (job) => {
@@ -44,10 +44,10 @@ export function useJobs(fetchCredit) {
         try {
             const response = await authFetch(`/api/jobs/${job.id}/retry-failed`, { method: 'POST' });
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error || '重试失败');
+            if (!response.ok) throw new Error(data.error || 'Retry failed');
             await fetchJobs(user);
         } catch (error) {
-            alert(error.message || '重试失败');
+            alert(error.message || 'Retry failed');
         } finally {
             delete retryingJobs.value[job.id];
         }
@@ -58,10 +58,10 @@ export function useJobs(fetchCredit) {
         try {
             const response = await authFetch(`/api/jobs/${jobId}/retry-task/${taskId}`, { method: 'POST' });
             const data = await response.json();
-            if (!response.ok) throw new Error(data.error || '重试失败');
+            if (!response.ok) throw new Error(data.error || 'Retry failed');
             await fetchJobs(user);
         } catch (error) {
-            alert(error.message || '重试失败');
+            alert(error.message || 'Retry failed');
         } finally {
             delete retryingTasks.value[taskId];
         }

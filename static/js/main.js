@@ -29,6 +29,26 @@ export default {
 
         const userValue = () => user.value;
 
+        // ── On-demand login gate ──
+        // The app is fully browsable while signed out. Any action that writes
+        // user data (or reads user-scoped data) calls requireAuth(); if the
+        // visitor isn't signed in we open the login modal and resume the
+        // pending action once authentication succeeds.
+        const showLoginModal = ref(false);
+        let pendingAction = null;
+
+        const requireAuth = (action) => {
+            if (user.value) { if (action) action(); return; }
+            pendingAction = action || null;
+            showLoginModal.value = true;
+        };
+
+        const closeLoginModal = () => {
+            showLoginModal.value = false;
+            pendingAction = null;
+            loginForm.value = { username: '', password: '' };
+        };
+
         // ── Credits ──
         const {
             userCredit, isAliyunModel, fetchCredit,
@@ -165,13 +185,31 @@ export default {
             }
         };
 
-        const handleLogin = () => _handleLogin(initializeUserSpace);
+        const handleLogin = () => _handleLogin(() => {
+            showLoginModal.value = false;
+            initializeUserSpace();
+            const resume = pendingAction;
+            pendingAction = null;
+            if (resume) resume();
+        });
 
         const handleLogout = () => _handleLogout(() => {
             userCredit.value = null;
             jobs.value = [];
             templates.value = { public: [], private: [] };
+            availableModels.value = [];
+            currentTab.value = 'create';
         });
+
+        // ── Auth-gated action wrappers ──
+        const submitJob = () => requireAuth(_submitJob);
+        const goToTab = (tab) => {
+            if (tab === 'jobs') { requireAuth(() => { currentTab.value = 'jobs'; fetchJobs(); }); return; }
+            currentTab.value = tab;
+        };
+        const openSaveModalGated = (...args) => requireAuth(() => openSaveModal(...args));
+        const openSaveModalFromResultGated = (...args) => requireAuth(() => openSaveModalFromResult(...args));
+        const openTemplateManager = () => requireAuth(() => { showTemplateManagerModal.value = true; });
 
         onMounted(() => {
             checkAuth(initializeUserSpace);
@@ -191,9 +229,10 @@ export default {
 
             // Auth
             user, isLoggingIn, loginForm, handleLogin, handleLogout,
+            showLoginModal, closeLoginModal, requireAuth,
 
             // Navigation
-            currentTab,
+            currentTab, goToTab,
 
             // Credits
             userCredit, isAliyunModel, estimateCredits,
@@ -203,11 +242,12 @@ export default {
             isVideoFile, filteredModels, calculateTotalTasks, isSubmitDisabled,
             triggerFileInput, handleFileUpload, onDrop, handlePaste,
             removeFile, removeAllFiles, getObjectURL,
-            submitJob: _submitJob,
+            submitJob,
 
             // Templates
             templates, showSaveTemplateModal, showTemplateManagerModal, newTemplate,
-            handleTemplateSelect, openSaveModal, openSaveModalFromResult,
+            handleTemplateSelect, openTemplateManager,
+            openSaveModal: openSaveModalGated, openSaveModalFromResult: openSaveModalFromResultGated,
             saveTemplate, editTemplate, deleteTemplate,
 
             // Jobs

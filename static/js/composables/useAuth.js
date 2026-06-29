@@ -14,7 +14,7 @@ export function useAuth() {
         if (user.value) {
             user.value = null;
             localStorage.removeItem('auth_token');
-            alert("登录已过期，请重新登录");
+            alert("Your session has expired. Please sign in again.");
         }
     });
 
@@ -51,10 +51,10 @@ export function useAuth() {
                 loginForm.value = { username: '', password: '' };
                 if (onSuccess) onSuccess();
             } else {
-                alert(data.error || "登录失败");
+                alert(data.error || "Sign-in failed");
             }
         } catch (e) {
-            alert("网络错误");
+            alert("Network error");
         } finally {
             isLoggingIn.value = false;
         }

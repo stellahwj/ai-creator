@@ -168,20 +168,20 @@ export function useForm(form, currentTab, fetchJobs, fetchCredit, userValue, ecS
                     const fd = buildVideoFormData(line);
                     const resp = await authFetch('/api/jobs', { method: 'POST', body: fd });
                     const data = await resp.json();
-                    if (!resp.ok || !data.id) { alert('提交失败: ' + (data.error || "未知原因")); break; }
+                    if (!resp.ok || !data.id) { alert('Submission failed: ' + (data.error || "Unknown error")); break; }
                 }
                 form.value.prompts = ''; form.value.negative_prompt = ''; removeAllFiles();
                 currentTab.value = 'jobs'; fetchJobs(userValue());
-            } catch (error) { alert('请求发生错误: ' + error.message); }
+            } catch (error) { alert('Request error: ' + error.message); }
             finally { isSubmitting.value = false; }
             return;
         }
 
         if (form.value.mode === 'convert' && form.value.target_ratios.length === 0) {
-            alert("请至少选择一个目标尺寸比例"); return;
+            alert("Please select at least one target aspect ratio."); return;
         }
         if (['i2i', 'fission', 'convert', 'extract'].includes(form.value.mode) && form.value.files.length === 0) {
-            alert("请至少上传一张参考图片"); return;
+            alert("Please upload at least one reference image."); return;
         }
         if (form.value.mode !== 'convert' && form.value.mode !== 'fission' && form.value.mode !== 'extract' && !form.value.prompts.trim()) {
             return;
@@ -190,7 +190,7 @@ export function useForm(form, currentTab, fetchJobs, fetchCredit, userValue, ecS
         isSubmitting.value = true;
         let finalPrompt = form.value.prompts.trim();
         if (form.value.mode === 'convert' && !finalPrompt) {
-            finalPrompt = "保持原图主体结构和风格不变，将画面自然延展或重绘以适应设定的新比例尺寸，边缘过渡自然。";
+            finalPrompt = "Keep the original subject structure and style unchanged; naturally extend or repaint the image to fit the new aspect ratio with smooth edge transitions.";
         }
 
         let tplName = form.value.selectedTemplate;
@@ -245,7 +245,7 @@ export function useForm(form, currentTab, fetchJobs, fetchCredit, userValue, ecS
                     const response = await authFetch('/api/jobs', { method: 'POST', body: buildFd(ratio, batch) });
                     const data = await response.json();
                     if (response.ok && data.id) { anyOk = true; }
-                    else { alert('提交失败: ' + (data.error || "未知原因")); break outer; }
+                    else { alert('Submission failed: ' + (data.error || "Unknown error")); break outer; }
                 }
             }
             if (anyOk) {
@@ -254,7 +254,7 @@ export function useForm(form, currentTab, fetchJobs, fetchCredit, userValue, ecS
                 removeAllFiles();
                 currentTab.value = 'jobs'; fetchJobs(userValue());
             }
-        } catch (error) { alert('请求发生错误: ' + error.message); }
+        } catch (error) { alert('Request error: ' + error.message); }
         finally { isSubmitting.value = false; }
     };
 

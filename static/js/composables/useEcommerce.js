@@ -28,7 +28,7 @@ export function useEcommerce(form, currentTab, fetchJobs, fetchCredit, userValue
             const ecData = ecStep2Data.value
                 .map(item => ({ image_path: item.image_path, scenes: (item.scenes || []).filter(s => s.trim()) }))
                 .filter(item => item.scenes.length > 0);
-            if (!ecData.length) throw new Error('没有有效的场景数据，请至少保留一个场景');
+            if (!ecData.length) throw new Error('No valid scenes — please keep at least one scene.');
 
             const fd = new FormData();
             fd.append('mode', 'ecommerce');
@@ -42,7 +42,7 @@ export function useEcommerce(form, currentTab, fetchJobs, fetchCredit, userValue
 
             const res = await authFetch('/api/jobs', { method: 'POST', body: fd });
             const data = await res.json();
-            if (!res.ok || !data.id) throw new Error(data.error || '任务提交失败');
+            if (!res.ok || !data.id) throw new Error(data.error || 'Failed to submit job');
 
             ecFlowState.value = 'idle';
             setSubmitting(false);
@@ -51,7 +51,7 @@ export function useEcommerce(form, currentTab, fetchJobs, fetchCredit, userValue
             fetchJobs(userValue());
             fetchCredit();
         } catch (e) {
-            alert('任务提交失败：' + e.message);
+            alert('Failed to submit job: ' + e.message);
             cancelEcommerceFlow();
         }
     };
@@ -72,7 +72,7 @@ export function useEcommerce(form, currentTab, fetchJobs, fetchCredit, userValue
                     scene_count: ecSettings.value.scene_count,
                 }),
             });
-            if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'AI 场景生成失败'); }
+            if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'AI scene generation failed'); }
             const data = await res.json();
             ecStep2Data.value = data.items;
             if (ecSettings.value.one_shot || ecSettings.value.skip_step2_review) {
@@ -82,7 +82,7 @@ export function useEcommerce(form, currentTab, fetchJobs, fetchCredit, userValue
                 setSubmitting(false);
             }
         } catch (e) {
-            alert('场景方案生成失败：' + e.message);
+            alert('Scene generation failed: ' + e.message);
             cancelEcommerceFlow();
         }
     };
@@ -100,14 +100,14 @@ export function useEcommerce(form, currentTab, fetchJobs, fetchCredit, userValue
     };
 
     const startEcommerceFlow = async () => {
-        if (form.value.files.length === 0) { alert('请上传至少一张产品图片'); return; }
+        if (form.value.files.length === 0) { alert('Please upload at least one product image.'); return; }
         setSubmitting(true);
         ecFlowState.value = 'step1_loading';
         try {
             const fd = new FormData();
             form.value.files.forEach(f => fd.append('images', f));
             const res = await authFetch('/api/ecommerce/understand', { method: 'POST', body: fd });
-            if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'AI 产品分析失败'); }
+            if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'AI product analysis failed'); }
             const data = await res.json();
             ecStep1Data.value = data.items;
             if (ecSettings.value.one_shot || ecSettings.value.skip_step1_review) {
@@ -117,7 +117,7 @@ export function useEcommerce(form, currentTab, fetchJobs, fetchCredit, userValue
                 setSubmitting(false);
             }
         } catch (e) {
-            alert('产品分析失败：' + e.message);
+            alert('Product analysis failed: ' + e.message);
             cancelEcommerceFlow();
         }
     };

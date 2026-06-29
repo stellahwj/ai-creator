@@ -3,21 +3,21 @@
  */
 
 export const MODE_LABELS = {
-    t2i: '文本生图', i2i: '图像生图', fission: '图片裂变',
-    convert: 'AI尺寸重绘', video: '视频生成', multi_t2i: '多图生成',
-    multi_video: '多视频生成', extract: '图案提取生图',
-    ecommerce: '电商场景生图', threed: '3D图片转换',
-    size_annot: '产品尺寸标注',
+    t2i: 'Text to Image', i2i: 'Image to Image', fission: 'Image Variations',
+    convert: 'Smart Resize', video: 'Video Generation', multi_t2i: 'Batch Images',
+    multi_video: 'Batch Videos', extract: 'Pattern Extract',
+    ecommerce: 'E-commerce Scenes', threed: '3D Embroidery',
+    size_annot: 'Size Annotation',
 };
 
 export const RATIO_OPTIONS = [
-    { value: '1:1', label: '1:1 正方形' },
-    { value: '3:2', label: '3:2 横向/相机' },
-    { value: '2:3', label: '2:3 竖向/相机' },
-    { value: '4:3', label: '4:3 横向/显示器' },
-    { value: '3:4', label: '3:4 竖向' },
-    { value: '16:9', label: '16:9 宽屏' },
-    { value: '9:16', label: '9:16 手机全屏' },
+    { value: '1:1', label: '1:1 Square' },
+    { value: '3:2', label: '3:2 Landscape' },
+    { value: '2:3', label: '2:3 Portrait' },
+    { value: '4:3', label: '4:3 Standard' },
+    { value: '3:4', label: '3:4 Vertical' },
+    { value: '16:9', label: '16:9 Widescreen' },
+    { value: '9:16', label: '9:16 Mobile' },
 ];
 
 // Credit estimation (mirrors backend pricing)

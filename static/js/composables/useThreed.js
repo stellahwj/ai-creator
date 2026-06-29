@@ -25,7 +25,7 @@ export function useThreed(form, currentTab, fetchJobs, fetchCredit, userValue) {
             const tdData = tdStep1Data.value
                 .filter(item => item.description && item.description.trim())
                 .map(item => ({ description: item.description.trim(), image_name: item.image_name }));
-            if (!tdData.length) throw new Error('没有有效的图案描述，请手动输入后重试');
+            if (!tdData.length) throw new Error('No valid pattern description — please enter one and try again.');
 
             const fd = new FormData();
             fd.append('mode', 'threed');
@@ -39,7 +39,7 @@ export function useThreed(form, currentTab, fetchJobs, fetchCredit, userValue) {
 
             const res = await authFetch('/api/jobs', { method: 'POST', body: fd });
             const data = await res.json();
-            if (!res.ok || !data.id) throw new Error(data.error || '任务提交失败');
+            if (!res.ok || !data.id) throw new Error(data.error || 'Failed to submit job');
 
             tdFlowState.value = 'idle';
             setSubmitting(false);
@@ -48,7 +48,7 @@ export function useThreed(form, currentTab, fetchJobs, fetchCredit, userValue) {
             fetchJobs(userValue());
             fetchCredit();
         } catch (e) {
-            alert('任务提交失败：' + e.message);
+            alert('Failed to submit job: ' + e.message);
             cancelThreedFlow();
         }
     };
@@ -59,14 +59,14 @@ export function useThreed(form, currentTab, fetchJobs, fetchCredit, userValue) {
     };
 
     const startThreedFlow = async () => {
-        if (form.value.files.length === 0) { alert('请上传至少一张图片'); return; }
+        if (form.value.files.length === 0) { alert('Please upload at least one image.'); return; }
         setSubmitting(true);
         tdFlowState.value = 'td_step1_loading';
         try {
             const fd = new FormData();
             form.value.files.forEach(f => fd.append('images', f));
             const res = await authFetch('/api/threed/understand', { method: 'POST', body: fd });
-            if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'AI 图案分析失败'); }
+            if (!res.ok) { const d = await res.json(); throw new Error(d.error || 'AI pattern analysis failed'); }
             const data = await res.json();
             tdStep1Data.value = data.items;
             if (tdSettings.value.one_shot || tdSettings.value.skip_step1_review) {
@@ -76,7 +76,7 @@ export function useThreed(form, currentTab, fetchJobs, fetchCredit, userValue) {
                 setSubmitting(false);
             }
         } catch (e) {
-            alert('图案分析失败：' + e.message);
+            alert('Pattern analysis failed: ' + e.message);
             cancelThreedFlow();
         }
     };
